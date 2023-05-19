@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using Spalarium.Infrastructure.Domain.Models;
 using System;
-using Capstonep2.Infrastructure.Domain.Models.Enums;
+using Spalarium.Infrastructure.Domain.Models.Enums;
 using Spalarium.Pages.Manage.Account;
 
-namespace Capstonep2.Pages.Manage.Admin
+namespace Spalarium.Pages.Manage.Admin
 {
     [Authorize(Roles = "admin")]
     public class DashboardModel : PageModel
@@ -31,7 +31,7 @@ namespace Capstonep2.Pages.Manage.Admin
             View = View ?? new ViewModel();
         }
 
-        public IActionResult OnGet(Guid? id = null, Guid? crid = null, int? pageIndex = 1, int? pageSize = 10, string? sortBy = "", SortOrder sortOrder = SortOrder.Ascending, string? keyword = "", Status? status = null, DateTime? date = null)
+        public IActionResult OnGet(object oldrecords, Guid? id = null, Guid? crid = null, int? pageIndex = 1, int? pageSize = 10, string? sortBy = "", SortOrder sortOrder = SortOrder.Ascending, string? keyword = "", Status? status = null, DateTime? date = null)
         {
             Guid? userId = User.Id();
             var user = _context?.Users?.Where(a => a.ID == id).FirstOrDefault();
@@ -80,14 +80,16 @@ namespace Capstonep2.Pages.Manage.Admin
                 }
             }
 
-            var pasyente = query
+#pragma warning disable CS8629 // Nullable value type may be null.
+            var consumer = query
                            .Skip(skip)
                            .Take((int)pageSize)
                            .ToList();
+#pragma warning restore CS8629 // Nullable value type may be null.
 
             View.Pasyente = new Paged<Infrastructure.Domain.Models.Patient>()
             {
-                Items = pasyente,
+                Items = consumer,
                 PageIndex = pageIndex,
                 PageSize = pageSize,
                 TotalRows = totalRows,
@@ -101,15 +103,15 @@ namespace Capstonep2.Pages.Manage.Admin
             //patient query end
 
             //appts Query
-            var query1 = _context.Appointments.Include(a => a.Patient).AsQueryable();
+            var query1 = _context.Appointments.Include(a => a.Customer).AsQueryable();
             var skip1 = (int)((pageIndex - 1) * pageSize);
 
             if (!string.IsNullOrEmpty(keyword))
             {
                 query1 = query1.Where(a =>
-                         a.Customer.FirstName != null && a.Patient.FirstName.ToLower().Contains(keyword.ToLower())
-                      || a.Customer.MiddleName != null && a.Patient.MiddleName.ToLower().Contains(keyword.ToLower())
-                      || a.Customer.LastName != null && a.Patient.LastName.ToLower().Contains(keyword.ToLower())
+                         a.Customer.FirstName != null && a.Customer.FirstName.ToLower().Contains(keyword.ToLower())
+                      || a.Customer.MiddleName != null && a.Customer.MiddleName.ToLower().Contains(keyword.ToLower())
+                      || a.Customer.LastName != null && a.Customer.LastName.ToLower().Contains(keyword.ToLower())
 
                 );
             }
@@ -119,15 +121,15 @@ namespace Capstonep2.Pages.Manage.Admin
             {
                 if (sortBy.ToLower() == "firstname" && sortOrder == SortOrder.Ascending)
                 {
-                    query1 = query1.OrderBy(a => a.Patient.FirstName);
+                    query1 = query1.OrderBy(a => a.Customer.FirstName);
                 }
                 else if (sortBy.ToLower() == "middlename" && sortOrder == SortOrder.Ascending)
                 {
-                    query1 = query1.OrderBy(a => a.Patient.MiddleName);
+                    query1 = query1.OrderBy(a => a.Customer.MiddleName);
                 }
                 else if (sortBy.ToLower() == "lastname" && sortOrder == SortOrder.Ascending)
                 {
-                    query1 = query1.OrderBy(a => a.Patient.LastName);
+                    query1 = query1.OrderBy(a => a.Customer.LastName);
                 }
 
             }
@@ -165,13 +167,13 @@ namespace Capstonep2.Pages.Manage.Admin
                 .Select(a => new ViewModel()
                 {
 
-                    Address = a.Address,
-                    BirthDate = a.BirthDate,
-                    Email = a.Email,
-                    FirstName = a.FirstName,
-                    Gender = a.Gender,
-                    LastName = a.LastName,
-                    MiddleName = a.MiddleName,
+                    NewAddress = a.Address,
+                    NewBirthDate = a.BirthDate,
+                    NewEmail = a.Email,
+                    NewFirstName = a.FirstName,
+                    NewGender = a.Gender,
+                    NewLastName = a.LastName,
+                    NewMiddleName = a.MiddleName,
                 }).FirstOrDefault();
 
 
@@ -190,15 +192,11 @@ namespace Capstonep2.Pages.Manage.Admin
             //View = profile;
             var appointments = _context?.Appointments?.Include(a => a.Patient).ToList();
             View.Appointments = appointments;
-            var patients = _context?.Patients?.ToList();
-            View.Patients = patients;
-            var consultations = _context?.ConsultationRecords?.ToList();
-            View.ConsultationRecords = consultations;
-            var findings = _context?.Findings.ToList();
-            var prescriptions = _context?.Prescriptions.ToList();
-            View.Findings = findings;
-            View.Prescriptions = prescriptions;
-
+            var Customer = _context?.Patients?.ToList();
+            View.Customer = Customer;
+            var Services = _context?.ConsultationRecords?.ToList();
+            View.Records = oldrecords;
+            
 
             return Page();
         }
@@ -227,7 +225,7 @@ namespace Capstonep2.Pages.Manage.Admin
             }
 
 
-            var existingPatient = _context?.Patients?.FirstOrDefault(a =>
+            var existingCustomer = _context?.Patients?.FirstOrDefault(a =>
                     a.FirstName.ToLower() == View.FirstName.ToLower() &&
                     a.LastName.ToLower() == View.LastName.ToLower() &&
                     a.MiddleName.ToLower() == View.MiddleName.ToLower() &&
@@ -236,7 +234,7 @@ namespace Capstonep2.Pages.Manage.Admin
 
             );
 
-            if (existingPatient != null)
+            if (existingCustomer != null)
             {
                 ModelState.AddModelError("", "Patient is already existing.");
                 return Page();
@@ -249,10 +247,10 @@ namespace Capstonep2.Pages.Manage.Admin
             {
 
 
-                user.FirstName = View.FirstName;
-                user.MiddleName = View.MiddleName;
-                user.LastName = View.LastName;
-                user.Address = View.Address;
+                user.FirstName = View.NewFirstName;
+                user.MiddleName = View.NewMiddleName;
+                user.LastName = View.NewLastName;
+                user.Address = View.NewAddress;
 
 
 
@@ -260,7 +258,7 @@ namespace Capstonep2.Pages.Manage.Admin
                 _context?.Users?.Update(user);
                 _context?.SaveChanges();
 
-                return RedirectPermanent("~/Manage/Patient/Dashboard");
+                return RedirectPermanent("~/Manage/Customer/Dashboard");
             }
 
             return Page();
@@ -273,11 +271,11 @@ namespace Capstonep2.Pages.Manage.Admin
             {
                 return new JsonResult(new List<string>()
                 {
-                    "Elesh Norn, Grand Cenobyte",
-                    "Vorinclex, Monstrous Raider",
-                    "Urabrask, the Hidden",
-                    "Sheoldread, Whispering One",
-                    "Jin-Gitaxias, Core Augur",
+                    "Ara Rodriguez, Jose Chan",
+                    "Calvin, Jeril Nicdao",
+                    "Kenneth Lance",
+                    "Cj Nicdao",
+                    "Jigs Panganiban",
                     id.ToString()!
                 });
             }
@@ -317,11 +315,11 @@ namespace Capstonep2.Pages.Manage.Admin
 
             if (passwordInfo != null)
             {
-                if (BCrypt.Net.BCrypt.EnhancedVerify(View.CurrentPass, passwordInfo.Value))
+                if (BCrypt.Net.BCrypt.Verify(View.CurrentPass, passwordInfo.Value))
                 {
                     var userRole = _context?.UserRoles?.Include(a => a.Role)!.FirstOrDefault(a => a.UserID == User.Id());
 
-                    passwordInfo.Value = BCrypt.Net.BCrypt.EnhancedHashPassword(View.NewPass);
+                    passwordInfo.Value = BCrypt.Net.BCrypt.HashPassword(View.NewPass);
                     _context?.UserLogins?.Update(passwordInfo);
                     _context?.SaveChanges();
 
@@ -366,17 +364,17 @@ namespace Capstonep2.Pages.Manage.Admin
 
 
 
-            var patient = _context?.Patients?.FirstOrDefault(a => a.ID == Guid.Parse(View.EditPatientId));
+            var customer = _context?.Customers?.FirstOrDefault(a => a.ID == Guid.Parse(View.EditPatientId));
 
-            if (patient != null)
+            if (customer != null)
             {
 
-                patient.FirstName = View.EditFirstName;
-                patient.MiddleName = View.EditMiddleName;
-                patient.LastName = View.EditLastName;
-                patient.Address = View.EditAddress;
+                customer.FirstName = View.EditFirstName;
+                customer.MiddleName = View.EditMiddleName;
+                customer.LastName = View.EditLastName;
+                customer.Address = View.EditAddress;
 
-                _context?.Patients?.Update(patient);
+                _context?.Patients?.Update(customer);
 
                 _context?.SaveChanges();
 
@@ -516,7 +514,7 @@ namespace Capstonep2.Pages.Manage.Admin
         }
         public IActionResult OnPostEditApt()
         {
-            if (string.IsNullOrEmpty(View.Symptom1))
+            if (string.IsNullOrEmpty(View.Services))
             {
                 ModelState.AddModelError("", "First name cannot be blank.");
                 return RedirectPermanent("/manage/admin/dashboard");
@@ -586,7 +584,7 @@ namespace Capstonep2.Pages.Manage.Admin
             return RedirectPermanent("/manage/admin/dashboard");
         }
 
-        public IActionResult OnPostPatient()
+        public IActionResult OnPostCustomer()
         {
             if (string.IsNullOrEmpty(View.AddFirstName))
             {
@@ -630,12 +628,12 @@ namespace Capstonep2.Pages.Manage.Admin
                 ModelState.AddModelError("", "Address name cannot be blank.");
                 return RedirectPermanent("/manage/admin/dashboard");
             }
-            Guid patientGuid = Guid.NewGuid();
+            Guid customerGuid = Guid.NewGuid();
             Guid userGuid = Guid.NewGuid();
             User user = new User()
             {
                 ID = userGuid,
-                PatientID = patientGuid,
+                customerID = customerGuid,
                 FirstName = View.AddFirstName,
                 MiddleName = View.AddMiddleName,
                 LastName = View.AddLastName,
@@ -673,10 +671,10 @@ namespace Capstonep2.Pages.Manage.Admin
                     Value = "0"
                 }
             });
-            Infrastructure.Domain.Models.Patient patient = new Infrastructure.Domain.Models.Patient()
+            Infrastructure.Domain.Models.Patient customer = new Infrastructure.Domain.Models.Patient()
             {
 
-                ID = patientGuid,
+                ID = customerGuid,
                 FirstName = View.AddFirstName,
                 MiddleName = View.AddMiddleName,
                 LastName = View.AddLastName,
@@ -695,7 +693,7 @@ namespace Capstonep2.Pages.Manage.Admin
 
 
             _context?.Users?.Add(user);
-            _context?.Patients?.Add(patient);
+            _context?.Patients?.Add(customer);
             _context?.UserLogins?.AddRange(userLogins);
             _context?.UserRoles?.Add(userRole);
             _context?.SaveChanges();
@@ -707,17 +705,16 @@ namespace Capstonep2.Pages.Manage.Admin
 
         public class ViewModel : UserViewModel
         {
-
-
+            internal object Records;
 
             public string? CurrentPass { get; set; }
             public string? NewPass { get; set; }
             public string? RetypedPassword { get; set; }
             public Guid? ID { get; set; }
 
-            [ForeignKey("PatientID")]
-            public Infrastructure.Domain.Models.Patient? Patient { get; set; }
-            public Paged<Infrastructure.Domain.Models.Patient>? Pasyente { get; set; }
+            [ForeignKey("CUSTOMERID")]
+            public Infrastructure.Domain.Models.Customer? Customer { get; set; }
+            public Paged<Infrastructure.Domain.Models.Customer>? Pasyente { get; set; }
             public Paged<Infrastructure.Domain.Models.Appointment>? Appts { get; set; }
 
 
@@ -731,19 +728,17 @@ namespace Capstonep2.Pages.Manage.Admin
             public DateTime NewBirthDate { get; set; }
             public Infrastructure.Domain.Models.Enums.Gender NewGender { get; set; }
             public List<Appointment>? Appointments { get; set; }
-            public List<ConsultationRecord>? ConsultationRecords { get; set; }
-            public List<Infrastructure.Domain.Models.Patient>? Patients { get; set; }
-            public List<Finding>? Findings { get; set; }
-            public List<Prescription>? Prescriptions { get; set; }
+            public string? EditFirstName { get; internal set; }
 
-            public string? Symptom1 { get; set; }
+            public List<Records? Old Records { get; set; }
+            public List<Infrastructure.Domain.Models.Customer>? Customer{ get; set; }
+            public List<FromServicesAttribute>? Services { get; set; }
+           
+
+           
             public DateTime? StartTime1 { get; set; }
 
-            public Infrastructure.Domain.Models.Enums.Status Statusedit { get; set; }
-
-            public string? SymptomID { get; set; }
-            public string? StatusId { get; set; }
-
+ 
 
 
 
@@ -752,8 +747,8 @@ namespace Capstonep2.Pages.Manage.Admin
             public string? EditLastName { get; set; }
             public string? EditMiddleName { get; set; }
             public string? EditAddress { get; set; }
-            public string? EditPatientId { get; set; }
-            public Status StatusFilter { get; set; }
+            public string? EditCustomerId { get; set; }
+         
 
             //new patient
             public string? AddFirstName { get; set; }
