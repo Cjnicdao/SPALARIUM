@@ -1,0 +1,445 @@
+﻿@page
+@model Spalarium.Pages.Manage.Admin.DashboardModel
+@using Spalarium.Infrastructure.Domain.Models.Enums;
+@{
+}
+<div class="col-auto">
+    <br />
+    <ul class="nav nav-tabs" role="tablist" id="myTab">
+
+        <li class="nav-item">
+            <button href="#profile" class="nav-link active" role="tab" data-bs-toggle="tab">PROFILE</button>
+        </li>
+
+        <li class="nav-item">
+            <button href="#settings" class="nav-link" role="tab" data-bs-toggle="tab">PROFILE SETTING</button>
+        </li>
+
+        <li class="nav-item">
+            <button href="#appts" class="nav-link " role="tab" data-bs-toggle="tab" id="Navappts">APPOINTMENT</button>
+        </li>
+
+        <li class="nav-item">
+            <button href="#patients" class="nav-link " role="tab" data-bs-toggle="tab" id="Navpatients">PATIENTS</button>
+        </li>
+
+        <li class="nav-item">
+            <button href="#bago" class="nav-link " role="tab" data-bs-toggle="tab">ADD NEW USER</button>
+        </li>
+
+    </ul>
+
+    <div class="tab-content">
+        <div role="tabpanel" class="tab-pane active" id="profile">
+
+            <div class="card bg-mustardlite">
+
+                <div class="card-body">
+                    <table class="table table-striped">
+                        <tr>
+                            <th>Name:</th>
+                            <td>@ViewData["firstname"] @ViewData["middlename"] @ViewData["lastname"]</td>
+                        </tr>
+                        <tr>
+                            <th>Gender:</th>
+                            <td>@ViewData["gender"]</td>
+                        </tr>
+                        <tr>
+                            <th>Birthdate:</th>
+                            <td>@ViewData["birthdate"]</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>@ViewData["email"]</td>
+                        </tr>
+                        <tr>
+                            <th>Address:</th>
+                            <td>@ViewData["address"]</td>
+                        </tr>
+                    </table>
+
+
+                </div>
+
+                <div class="card-footer align-content-center justify-content-center">
+                    <div style="width: 450px" id="reader"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        ...
+                    </div>
+                    <div class="modal-footer">
+                        <a href="link-here" class="btn btn-primary">Proceed</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal -->
+
+
+
+        <div role="tabpanel" class="tab-pane" id="settings">
+
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChangeInfo">
+                Change User Info
+            </button>
+            <div class="collapse" id="collapseChangeInfo">
+                <form method="Post" asp-page-handler="ChangeProfile">
+                    <div class="form-group">
+                        <label asp-for="View.FirstName">First Name</label>
+                        <input type="text" class="form-control" placeholder="Enter First Name" asp-for="View.FirstName" id="FName">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="View.MiddleName">Middle Name</label>
+                        <input type="text" class="form-control" placeholder="Enter Middle Name" asp-for="View.MiddleName">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="View.LastName">Last Name</label>
+                        <input type="text" class="form-control" placeholder="Enter Last Name" asp-for="View.LastName">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="View.Address">Address</label>
+                        <input type="text" class="form-control" placeholder="Enter Address" asp-for="View.Address">
+                    </div>
+
+
+                    <div class="form-group alert-danger">
+                        @Html.ValidationSummary()
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChangePass">
+                Change Password
+            </button>
+
+            <div class="collapse" id="collapseChangePass">
+                <form method="Post" asp-page-handler="ChangePass">
+                    <div class="form-group">
+                        <label asp-for="View.CurrentPass">Current Password</label>
+                        <input asp-for="View.CurrentPass" type="text" class="form-control" placeholder="Enter Current password">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="View.NewPass">New Password</label>
+                        <input asp-for="View.NewPass" type="text" class="form-control" placeholder="Enter New password">
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="View.RetypedPassword">Re-type New Password</label>
+                        <input asp-for="View.RetypedPassword" type="text" class="form-control" placeholder="Enter new Password">
+                    </div>
+                    <div class="form-group alert-danger">
+                        @Html.ValidationSummary()
+                    </div>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Update password</button>
+                        <a href="~/dashboard/patient" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+
+
+        <div role="tabpanel" class="tab-pane" id="bago">
+
+            <div class="row justify-content-md-center">
+                <div class="col-4">
+                    <div class="card border border-dark bg-white">
+                        <div class="card-header justify-content-center">
+                            <h3 class="justify-content-center fw-bold">NEW USER</h3>
+                        </div>
+                        <div class="card-body bg-mustardlite">
+                            <form method="Post" asp-page-handler="Newuser">
+                                <div class="form-group">
+                                    <label asp-for="View.NewFirstName">FirstName</label>
+                                    <input type="text" class="form-control" placeholder="Enter FirstName" asp-for="View.NewFirstName">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="View.NewMiddleName">MiddleName</label>
+                                    <input type="text" class="form-control" placeholder="Enter FirstName" asp-for="View.NewMiddleName">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="View.NewLastName">LastName</label>
+                                    <input type="text" class="form-control" placeholder="Enter LastName" asp-for="View.NewLastName">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="View.NewGender">Sex</label>
+                                    <select asp-for="View.NewGender" class="form-control" id="Sex">
+                                        <option value="1">Male</option>
+                                        <option value="0">Female</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="View.NewBirthDate">Birthdate</label>
+                                    <input type="date" class="form-control" placeholder="Enter abbreviation" asp-for="View.NewBirthDate">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="View.NewAddress">Address</label>
+                                    <input type="text" class="form-control" placeholder="Enter Address" asp-for="View.NewAddress">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="View.NewEmail">EmailAddress</label>
+                                    <input type="text" class="form-control" placeholder="Enter Email" asp-for="View.NewEmail">
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="View.NewPassword">Password</label>
+                                    <input type="text" class="form-control" placeholder="Enter Password" asp-for="View.NewPassword">
+                                </div>
+                                <div class="form-group alert-danger">
+                                    @Html.ValidationSummary()
+                                </div>
+                                <div class="form-group">
+                                    <button type="submit" class="btn btn-primary">Sign up</button>
+                                    <a href="~/index" class="btn btn-secondary">Cancel</a>
+                                </div>
+
+
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+             </div>
+        <div role="tabpanel" class="tab-pane" id="appts">
+            <div class="row">
+                <div class="search">
+                    <i class="bi bi-search"></i>
+                    <input type="text" class="form-control" placeholder="Search" id="aptssearch">
+                </div>
+
+                <div class="col-3">
+                    <div class="form-group">
+                        <label for="">Sort By Name</label>
+                        <select class="form-control" id="aptssortBy" asp-for="View.Appts.SortBy">
+                            <option value="first">First Name</option>
+                            <option value="midllename">Middle Name</option>
+                            <option value="lastname">Last Name</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group">
+                        <label for="">Filter by Status</label>
+                        <select class="form-control" id="aptsfilterBy" asp-for="View.StatusFilter">
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="noshow">Noshow</option>
+                            <option value="cancelled">Cancelled</option>
+
+                        </select>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="form-group">
+                        <label for="">Filter by Date</label>
+                        <input type="date" class="form-control" id="aptsfilterDate" placeholder="Select date">
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <td>Full Name</td>
+                        <td> Service Provider</td>
+                        <td> Services</td>
+                        <td> Date</td>
+                        <td> Time</td>
+                        <td>Contact No </td>
+                        <td>Status</td>
+                      
+
+                    </tr>
+
+                </thead>
+                <tbody class="bg-white">
+                    @{
+                        foreach (var appointment in Model?.View?.Appts.Items)
+                        {
+                            <tr>
+
+                                <td>@appointment?.Patient?.FirstName @appointment?.Patient?.MiddleName @appointment?.Patient?.LastName </td>    
+                                <td>@appointment?.Service Provider</td>
+                                <td>@appointment?.Services</td>
+                                <td>@appointment.StartTime.Value.ToString("dd/MM/yyyy")</td>
+                                <td>@appointment?.StartTime.Value.ToString("H:mm tt")-@appointment?.EndTime.Value.ToString("H:mm tt")</td>
+                                <td>@appointment?.Status</td>
+
+                                <td>
+                                   @if (appointment.Status != Status.Completed)
+                                    {
+                                        <button href="#" class="btn btn-success" disabled>
+                                            <i class="fa fa-pencil">View</i>
+                                        </button>
+                                        <button href="#" class="btn btn-success" onclick="getPraetors('@appointment.ID')">
+                                            <i class="fa fa-pencil"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        foreach (var consultationRecord in Model?.View?.ConsultationRecords)
+                                        {
+                                            if(consultationRecord.AppointmentID == appointment.ID)
+                                            {
+                                                <!--Button For Modal Trigger-->
+                                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="@string.Format("#pfmodal{0}", appointment.ID)">
+                                                    <i class="fa fa-pencil">View</i>
+                                                </button>
+                                                <!--Button For Modal Trigger-->
+
+
+                                                <!-- Modal -->
+                                                <div class="modal fade" id="@string.Format("pfmodal{0}", appointment.ID)" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header bg-white">
+                                                                <h5 class="modal-title" id="exampleModalLabel">Consultation</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>                                                       
+                                                            </div>
+                                                            <div class="modal-body bg-white">
+                                                                <div class="col-auto ">
+                                                                    <!-- Prescription and Finding -->
+                                                                    
+                                                                    @if(Model?.View?.Prescriptions != null)
+                                                                    {
+                                                                        @foreach(var prescription in Model?.View?.Prescriptions)
+                                                                        {
+                                                                            if(prescription.ConsultationRecordID == consultationRecord.ID)
+                                                                            {
+                                                                                <div class="card bg-white">
+                                                                                    <div class="card-header bg-info">
+                                                                                        <span class="text-bg-info text-lg-center">PRESCRIPTIONS</span>
+                                                                                    </div>
+                                                                                    <div class="card-body">
+                                                                                            <div class="card-group">
+                                                                                            <p class="text-bg-dark"> DESCRIPTIONS: </p>
+                                                                                            <span>@prescription.Description</span>
+                                                                                            </div>
+
+                                                                                            <div class="card-group">
+                                                                                            <p class="text-bg-dark">TAGS:</p>
+                                                                                            <span>@prescription.Tags</span>
+                                                                                            </div>
+                                                                                        
+                                                                                    </div>
+                                                                                </div>
+                                                                            }
+                                                                        }
+                                                                    }
+
+
+                                                                    @if (Model?.View?.Findings != null)
+                                                                    {
+                                                                        @foreach (var finding in Model?.View?.Findings)
+                                                                        {
+                                                                            if (finding.ConsultationRecordID == consultationRecord.ID)
+                                                                            {
+                                                                                <div class="card bg-white">
+                                                                                    <div class="card-header bg-info">
+                                                                                        <span class="text-bg-info">FINDINGS</span>
+                                                                                    </div>
+
+                                                                                    <div class="card-body">
+                                                                                        <div class="card-group">
+                                                                                            <p class="text-bg-dark"> DESCRIPTIONS: </p>
+                                                                                            <span>@finding.Description</span>
+                                                                                        </div>
+                                                                                        <div class="card-group">
+                                                                                            <p class="text-bg-dark">TAGS:</p>
+                                                                                            <span>@finding.Tags</span>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            }
+                                                                        }
+                                                                    }
+
+                                                                    <!-- Prescription and Finding -->
+                                                                </div>
+                                                            </div>
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Modal -->
+                                                
+                                            }
+                                        }
+                                    } 
+                                    
+                                   
+                                </td>
+
+
+                                <td>
+                                    @if (appointment.Status == Status.Pending || appointment.Status == Status.InProgress )
+                                    {
+
+
+                                        <!--Button For Modal Trigger-->
+                                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="@string.Format("#Editsmodal{0}", appointment.ID)">
+                                            <i class="fa fa-pencil">Edit Appointment</i>
+                                        </button>
+                                        <!--Button For Modal Trigger-->
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="@string.Format("Editsmodal{0}", appointment.ID)" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content bg-white">
+                                                    <div class="modal-header bg-white">
+                                                        <h5 class="modal-title" id="exampleModalLabel">EDIT</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" />
+                                                    </div>
+                                                    <div class="modal-body bg-white">
+                                                        <div class="col-auto ">
+                                                          <form method="Post" asp-page-handler="EditApt">
+                                                                <div class="form-group">
+                                                                    <label asp-for="View.FirstName">Symptoms</label>
+                                                                    <input type="text" class="form-control" placeholder="Enter symptoms" asp-for="View.Symptom1" value="@appointment.Symptom">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label asp-for="View.BirthDate">Date Time</label>
+                                                                    <input type="datetime-local" class="form-control" placeholder="Enter abbreviation" asp-for="View.StartTime1" value="@appointment.Symptom">
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <input type="hidden" class="form-control" placeholder="Enter Address" asp-for="View.SymptomID" value="@appointment.ID">
+                                                                </div>
+
+
+                                                                <div class="form-group alert-danger">
+                                                                    @Html.ValidationSummary()
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <button type="submit" class="btn btn-primary">Save</button>
+                                                                    <a href="~/manage/admin/dashboard" class="btn btn-secondary">Cancel</a>
+                                                                </div>
+                                                          </form>
+
+
+                                                        
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>

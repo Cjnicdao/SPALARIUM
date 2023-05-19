@@ -1,0 +1,8 @@
+C:\Users\user\Documents\CSM\SYSTEM\Spalirum\Spalirum\obj\Debug\net6.0\Spalirum.csproj.AssemblyReference.cache
+C:\Users\user\Documents\CSM\SYSTEM\Spalirum\Spalirum\obj\Debug\net6.0\Spalirum.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\user\Documents\CSM\SYSTEM\Spalirum\Spalirum\obj\Debug\net6.0\Spalirum.AssemblyInfoInputs.cache
+C:\Users\user\Documents\CSM\SYSTEM\Spalirum\Spalirum\obj\Debug\net6.0\Spalirum.AssemblyInfo.cs
+C:\Users\user\Documents\CSM\SYSTEM\Spalirum\Spalirum\obj\Debug\net6.0\Spalirum.csproj.CoreCompileInputs.cache
+C:\Users\user\Documents\CSM\SYSTEM\Spalirum\Spalirum\obj\Debug\net6.0\Spalirum.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\user\Documents\CSM\SYSTEM\Spalirum\Spalirum\obj\Debug\net6.0\Spalirum.RazorAssemblyInfo.cache
+C:\Users\user\Documents\CSM\SYSTEM\Spalirum\Spalirum\obj\Debug\net6.0\Spalirum.RazorAssemblyInfo.cs
