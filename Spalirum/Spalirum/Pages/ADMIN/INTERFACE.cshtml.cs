@@ -1,14 +1,7 @@
-using Spalarium.Infrastructure.Domain.Security;
-using Spalarium.Infrastructure.Domain;
-using Spalarium.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
-using Spalarium.Infrastructure.Domain.Models;
-using System;
-using Spalarium.Infrastructure.Domain.Models.Enums;
 using Spalarium.Pages.Manage.Account;
 
 namespace Spalarium.Pages.Manage.Admin
@@ -37,7 +30,7 @@ namespace Spalarium.Pages.Manage.Admin
             var user = _context?.Users?.Where(a => a.ID == id).FirstOrDefault();
 
             //patient query 
-            var query = _context.Patients.AsQueryable();
+            var query = _context.Customer.AsQueryable();
 
             var skip = (int)((pageIndex - 1) * pageSize);
 
@@ -72,7 +65,7 @@ namespace Spalarium.Pages.Manage.Admin
                 }
                 else if (sortBy.ToLower() == "address" && sortOrder == SortOrder.Ascending)
                 {
-                    query = _context.Patients.OrderBy(a => a.Address);
+                    query = _context.Customer.OrderBy(a => a.Address);
                 }
                 else if (sortBy.ToLower() == "address" && sortOrder == SortOrder.Descending)
                 {
@@ -87,7 +80,7 @@ namespace Spalarium.Pages.Manage.Admin
                            .ToList();
 #pragma warning restore CS8629 // Nullable value type may be null.
 
-            View.Pasyente = new Paged<Infrastructure.Domain.Models.Patient>()
+            View.Pasyente = new Paged<Infrastructure.Domain.Models.Customer>()
             {
                 Items = consumer,
                 PageIndex = pageIndex,
@@ -103,8 +96,8 @@ namespace Spalarium.Pages.Manage.Admin
             //patient query end
 
             //appts Query
-            var query1 = _context.Appointments.Include(a => a.Customer).AsQueryable();
-            var skip1 = (int)((pageIndex - 1) * pageSize);
+            var query1 = _context.Schedule.Include(a => a.Customer).AsQueryable();
+            var skip1 = (int)((pageIndex - 2) * pageSize);
 
             if (!string.IsNullOrEmpty(keyword))
             {
@@ -148,7 +141,7 @@ namespace Spalarium.Pages.Manage.Admin
                           .ToList();
 
 
-            View.Appts = new Paged<Infrastructure.Domain.Models.Appointment>()
+            View.Appts = new Paged<Infrastructure.Domain.Models.Schedule>()
             {
                 Items = appts,
                 PageIndex = pageIndex,
@@ -192,9 +185,9 @@ namespace Spalarium.Pages.Manage.Admin
             //View = profile;
             var appointments = _context?.Appointments?.Include(a => a.Patient).ToList();
             View.Appointments = appointments;
-            var Customer = _context?.Patients?.ToList();
+            var Customer = _context?.Customers?.ToList();
             View.Customer = Customer;
-            var Services = _context?.ConsultationRecords?.ToList();
+            var Services = _context?.CustomerRecords?.ToList();
             View.Records = oldrecords;
             
 
@@ -225,7 +218,7 @@ namespace Spalarium.Pages.Manage.Admin
             }
 
 
-            var existingCustomer = _context?.Patients?.FirstOrDefault(a =>
+            var existingCustomer = _context?.Customer?.FirstOrDefault(a =>
                     a.FirstName.ToLower() == View.FirstName.ToLower() &&
                     a.LastName.ToLower() == View.LastName.ToLower() &&
                     a.MiddleName.ToLower() == View.MiddleName.ToLower() &&
@@ -236,7 +229,7 @@ namespace Spalarium.Pages.Manage.Admin
 
             if (existingCustomer != null)
             {
-                ModelState.AddModelError("", "Patient is already existing.");
+                ModelState.AddModelError("", "Customer is already existing.");
                 return Page();
             }
 
@@ -374,7 +367,7 @@ namespace Spalarium.Pages.Manage.Admin
                 customer.LastName = View.EditLastName;
                 customer.Address = View.EditAddress;
 
-                _context?.Patients?.Update(customer);
+                _context?.Customer?.Update(customer);
 
                 _context?.SaveChanges();
 
@@ -522,35 +515,12 @@ namespace Spalarium.Pages.Manage.Admin
 
 
 
-
-            var symptom = _context?.Appointments?.FirstOrDefault(a => a.ID == Guid.Parse(View.SymptomID));
-
-            if (symptom != null)
-            {
-
-                symptom.Symptom = View.Symptom1;
-                symptom.StartTime = View.StartTime1;
-
-
-                _context?.Appointments?.Update(symptom);
-
-                _context?.SaveChanges();
-
-                return RedirectPermanent("~/manage/admin/dashboard");
-            }
-
-
-
-
-
-
-
-            return RedirectPermanent("/manage/admin/dashboard");
+            
         }
 
         public IActionResult OnPostEditstatus()
         {
-            if (!Enum.IsDefined(typeof(Status), View.Statusedit))
+            if (!Enum.IsDefined(typeof(Service), View.Servicesedit))
             {
                 ModelState.AddModelError("", " status cannot be blank.");
                 return RedirectPermanent("/manage/admin/dashboard");
@@ -559,16 +529,16 @@ namespace Spalarium.Pages.Manage.Admin
 
 
 
-            var symptom = _context?.Appointments?.FirstOrDefault(a => a.ID == Guid.Parse(View.SymptomID));
+            var service = _context?.Schedule?.FirstOrDefault(a => a.ID == Guid.Parse(View.SymptomID));
 
-            if (symptom != null)
+            if (service != null)
             {
 
-                symptom.Status = View.Statusedit;
+                service.Status = View.Statusedit;
 
 
 
-                _context?.Appointments?.Update(symptom);
+                _context?.Schedule?.Update(service);
 
                 _context?.SaveChanges();
 
@@ -671,7 +641,7 @@ namespace Spalarium.Pages.Manage.Admin
                     Value = "0"
                 }
             });
-            Infrastructure.Domain.Models.Patient customer = new Infrastructure.Domain.Models.Patient()
+            Infrastructure.Domain.Models.Customer customer = new Infrastructure.Domain.Models.Patient()
             {
 
                 ID = customerGuid,
@@ -693,7 +663,7 @@ namespace Spalarium.Pages.Manage.Admin
 
 
             _context?.Users?.Add(user);
-            _context?.Patients?.Add(customer);
+            _context?.Customer?.Add(customer);
             _context?.UserLogins?.AddRange(userLogins);
             _context?.UserRoles?.Add(userRole);
             _context?.SaveChanges();
@@ -715,7 +685,7 @@ namespace Spalarium.Pages.Manage.Admin
             [ForeignKey("CUSTOMERID")]
             public Infrastructure.Domain.Models.Customer? Customer { get; set; }
             public Paged<Infrastructure.Domain.Models.Customer>? Pasyente { get; set; }
-            public Paged<Infrastructure.Domain.Models.Appointment>? Appts { get; set; }
+            public Paged<Infrastructure.Domain.Models.Schedule>? Appts { get; set; }
 
 
             public string? NewFirstName { get; set; }
@@ -727,7 +697,7 @@ namespace Spalarium.Pages.Manage.Admin
             public string? NewPassword { get; set; }
             public DateTime NewBirthDate { get; set; }
             public Infrastructure.Domain.Models.Enums.Gender NewGender { get; set; }
-            public List<Appointment>? Appointments { get; set; }
+            public List<Schedule>? Appointments { get; set; }
             public string? EditFirstName { get; internal set; }
 
             public List<Records? Old Records { get; set; }
