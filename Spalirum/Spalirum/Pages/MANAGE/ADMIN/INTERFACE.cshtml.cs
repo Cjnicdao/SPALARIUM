@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations.Schema;
 using Spalarium.Pages.Manage.Account;
+using MiNET.Utils;
 
 namespace Spalarium.Pages.Manage.Admin
 {
@@ -47,27 +48,27 @@ namespace Spalarium.Pages.Manage.Admin
 
             if (!string.IsNullOrEmpty(sortBy))
             {
-                if (sortBy.ToLower() == "firstname" && sortOrder == SortOrder.Ascending)
+                if (sortBy.ToLower() == "firstname" && sortOrder == sortOrder.Ascending)
                 {
                     query = query.OrderBy(a => a.FirstName);
                 }
-                else if (sortBy.ToLower() == "middlename" && sortOrder == SortOrder.Descending)
+                else if (sortBy.ToLower() == "middlename" && sortOrder == sortOrder.Descending)
                 {
                     query = query.OrderByDescending(a => a.MiddleName);
                 }
-                else if (sortBy.ToLower() == "lastname" && sortOrder == SortOrder.Ascending)
+                else if (sortBy.ToLower() == "lastname" && sortOrder == sortOrder.Ascending)
                 {
                     query = query.OrderBy(a => a.LastName);
                 }
-                else if (sortBy.ToLower() == "lastname" && sortOrder == SortOrder.Descending)
+                else if (sortBy.ToLower() == "lastname" && sortOrder == sortOrder.Descending)
                 {
                     query = query.OrderByDescending(a => a.Address);
                 }
-                else if (sortBy.ToLower() == "address" && sortOrder == SortOrder.Ascending)
+                else if (sortBy.ToLower() == "address" && sortOrder == sortOrder.Ascending)
                 {
                     query = _context.Customer.OrderBy(a => a.Address);
                 }
-                else if (sortBy.ToLower() == "address" && sortOrder == SortOrder.Descending)
+                else if (sortBy.ToLower() == "address" && sortOrder == sortOrder.Descending)
                 {
                     query = query.OrderByDescending(a => a.Address);
                 }
@@ -112,21 +113,24 @@ namespace Spalarium.Pages.Manage.Admin
 
             if (!string.IsNullOrEmpty(sortBy))
             {
-                if (sortBy.ToLower() == "firstname" && sortOrder == SortOrder.Ascending)
+                if (sortBy.ToLower() == "firstname" && sortOrder == sortOrder.Ascending)
                 {
                     query1 = query1.OrderBy(a => a.Customer.FirstName);
                 }
-                else if (sortBy.ToLower() == "middlename" && sortOrder == SortOrder.Ascending)
+                else if (sortBy.ToLower() == "middlename" && sortOrder == sortOrder.Ascending)
                 {
                     query1 = query1.OrderBy(a => a.Customer.MiddleName);
                 }
-                else if (sortBy.ToLower() == "lastname" && sortOrder == SortOrder.Ascending)
+                else if (sortBy.ToLower() == "lastname" && sortOrder == sortOrder.Ascending)
                 {
                     query1 = query1.OrderBy(a => a.Customer.LastName);
                 }
 
             }
-            if (status != null)
+            if (status == null)
+            {
+            }
+            else
             {
                 query1 = query1.Where(a => a.Status == status);
             }
@@ -183,11 +187,11 @@ namespace Spalarium.Pages.Manage.Admin
 
 
             //View = profile;
-            var appointments = _context?.Appointments?.Include(a => a.Patient).ToList();
-            View.Appointments = appointments;
-            var Customer = _context?.Customers?.ToList();
+            var schedules = _context?.Schedule?.Include(a => a.Patient).ToList();
+            View.Schedule = schedules;
+            var Customer = _context?.Customer?.ToList();
             View.Customer = Customer;
-            var Services = _context?.CustomerRecords?.ToList();
+            var Services = _context?.Services?.ToList();
             View.Records = oldrecords;
             
 
@@ -357,7 +361,7 @@ namespace Spalarium.Pages.Manage.Admin
 
 
 
-            var customer = _context?.Customers?.FirstOrDefault(a => a.ID == Guid.Parse(View.EditPatientId));
+            var customer = _context?.Customer?.FirstOrDefault(a => a.ID == Guid.Parse(View.EditPatientId));
 
             if (customer != null)
             {
@@ -459,7 +463,7 @@ namespace Spalarium.Pages.Manage.Admin
                     UserID =userGuid,
                     Type = "General",
                     Key = "Password",
-                    Value = BCrypt.Net.BCrypt.EnhancedHashPassword(View.NewPassword)
+                    Value = BCrypt.Net.BCrypt.HashPassword(View.NewPassword)
                 },
                 new UserLogin()
                 {
@@ -505,7 +509,7 @@ namespace Spalarium.Pages.Manage.Admin
 
             return Page();
         }
-        public IActionResult OnPostEditApt()
+        public IActionResult DashboardModel.OnPostEditApt()
         {
             if (string.IsNullOrEmpty(View.Services))
             {
@@ -520,7 +524,7 @@ namespace Spalarium.Pages.Manage.Admin
 
         public IActionResult OnPostEditstatus()
         {
-            if (!Enum.IsDefined(typeof(Service), View.Servicesedit))
+            if (!Enum.IsDefined(typeof(IServiceScope), View.Servicesedit))
             {
                 ModelState.AddModelError("", " status cannot be blank.");
                 return RedirectPermanent("/manage/admin/dashboard");
@@ -699,6 +703,27 @@ namespace Spalarium.Pages.Manage.Admin
             public Infrastructure.Domain.Models.Enums.Gender NewGender { get; set; }
             public List<Schedule>? Appointments { get; set; }
             public string? EditFirstName { get; internal set; }
+            public object? Schedule { get; internal set; }
+            public string? FirstName { get; internal set; }
+            public string? MiddleName { get; internal set; }
+            public string? LastName { get; internal set; }
+            public string? Address { get; internal set; }
+            public string? EditMiddleName { get; internal set; }
+            public string? EditLastName { get; internal set; }
+            public string? EditAddress { get; internal set; }
+            public object? Email { get; internal set; }
+            public object? BirthDate { get; internal set; }
+            public object? Gender { get; internal set; }
+            public string? Services { get; internal set; }
+            public object? Servicesedit { get; internal set; }
+            public object? Statusedit { get; internal set; }
+            public string? AddFirstName { get; internal set; }
+            public string? AddMiddleName { get; internal set; }
+            public string? AddLastName { get; internal set; }
+            public object? AddGender { get; internal set; }
+            public DateTime AddBirthDate { get; internal set; }
+            public string? AddAddress { get; internal set; }
+            public string? AddEmail { get; internal set; }
 
             public List<Records? Old Records { get; set; }
             public List<Infrastructure.Domain.Models.Customer>? Customer{ get; set; }
@@ -732,4 +757,19 @@ namespace Spalarium.Pages.Manage.Admin
 
 
         }
+
+    internal class Paged<T>
+    {
+        public Paged()
+        {
+        }
+
+        public object Items { get; set; }
+        public int? PageIndex { get; set; }
+        public int? PageSize { get; set; }
+        public int TotalRows { get; set; }
+        public string SortBy { get; set; }
+        public object SortOrder { get; set; }
+        public string Keyword { get; set; }
     }
+}

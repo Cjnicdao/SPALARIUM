@@ -15,20 +15,20 @@ build_property.GenerateRazorMetadataSourceChecksumAttributes =
 build_property.MSBuildProjectDirectory = C:\Users\user\Documents\CSM\SYSTEM\Spalirum\Spalirum
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/user/Documents/CSM/SYSTEM/Spalirum/Spalirum/Pages/ACCOUNTS/SIGNUP.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQUNDT1VOVFNcU0lHTlVQLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/user/Documents/CSM/SYSTEM/Spalirum/Spalirum/Pages/ADMIN/INTERFACE.cshtml]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcQURNSU5cSU5URVJGQUNFLmNzaHRtbA==
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/user/Documents/CSM/SYSTEM/Spalirum/Spalirum/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/user/Documents/CSM/SYSTEM/Spalirum/Spalirum/Pages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/user/Documents/CSM/SYSTEM/Spalirum/Spalirum/Pages/MANAGE/ACCOUNTS/SIGNUP.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTUFOQUdFXEFDQ09VTlRTXFNJR05VUC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/user/Documents/CSM/SYSTEM/Spalirum/Spalirum/Pages/MANAGE/ADMIN/INTERFACE.cshtml]
+build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTUFOQUdFXEFETUlOXElOVEVSRkFDRS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/user/Documents/CSM/SYSTEM/Spalirum/Spalirum/Pages/Privacy.cshtml]

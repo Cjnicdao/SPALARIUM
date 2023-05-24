@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Abp.Zero.Common" Version="8.2.0" />
     <PackageReference Include="BCrypt.Net" Version="0.1.0" />
+    <PackageReference Include="MySqlConnector" Version="2.2.6" />
   </ItemGroup>
 
 </Project>

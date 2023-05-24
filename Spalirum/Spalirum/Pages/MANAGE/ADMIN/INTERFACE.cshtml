@@ -1,5 +1,5 @@
 ﻿@page
-@model Spalarium.Pages.Manage.Admin.DashboardModel
+@model Spalarium.Pages.Manage.Admin.INTERFACE
 @using Spalarium.Infrastructure.Domain.Models.Enums;
 @{
 }
@@ -20,7 +20,7 @@
         </li>
 
         <li class="nav-item">
-            <button href="#patients" class="nav-link " role="tab" data-bs-toggle="tab" id="Navpatients">PATIENTS</button>
+            <button href="#customer" class="nav-link " role="tab" data-bs-toggle="tab" id="Navpatients">PATIENTS</button>
         </li>
 
         <li class="nav-item">
@@ -32,7 +32,7 @@
     <div class="tab-content">
         <div role="tabpanel" class="tab-pane active" id="profile">
 
-            <div class="card bg-mustardlite">
+            <div class="card bg-lightblue">
 
                 <div class="card-body">
                     <table class="table table-striped">
@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="card-footer align-content-center justify-content-center">
-                    <div style="width: 450px" id="reader"></div>
+                    <div style="width: 500px" id="reader"></div>
                 </div>
 
             </div>
@@ -167,7 +167,7 @@
                         <div class="card-header justify-content-center">
                             <h3 class="justify-content-center fw-bold">NEW USER</h3>
                         </div>
-                        <div class="card-body bg-mustardlite">
+                        <div class="card-body bg-lightblue">
                             <form method="Post" asp-page-handler="Newuser">
                                 <div class="form-group">
                                     <label asp-for="View.NewFirstName">FirstName</label>
@@ -275,71 +275,71 @@
                 </thead>
                 <tbody class="bg-white">
                     @{
-                        foreach (var appointment in Model?.View?.Appts.Items)
+                        foreach (var Schedule in Model?.View?.Appts.Items)
                         {
                             <tr>
 
-                                <td>@appointment?.Patient?.FirstName @appointment?.Patient?.MiddleName @appointment?.Patient?.LastName </td>    
-                                <td>@appointment?.Service Provider</td>
-                                <td>@appointment?.Services</td>
-                                <td>@appointment.StartTime.Value.ToString("dd/MM/yyyy")</td>
-                                <td>@appointment?.StartTime.Value.ToString("H:mm tt")-@appointment?.EndTime.Value.ToString("H:mm tt")</td>
-                                <td>@appointment?.Status</td>
+                                <td>@Schedule?.Customer?.FirstName @Schedule?.Customer?.MiddleName @Schedule?.Customer?.LastName </td>    
+                                <td>@Schedule?.Service Provider</td>
+                                <td>@Schedule?.Services</td>
+                                <td>@Schedule.StartTime.Value.ToString("dd/MM/yyyy")</td>
+                                <td>@Schedule?.StartTime.Value.ToString("H:mm tt")-@Schedule?.EndTime.Value.ToString("H:mm tt")</td>
+                                <td>@Schedule?.Status</td>
 
                                 <td>
-                                   @if (appointment.Status != Status.Completed)
+                                   @if (Schedule.Status != Status.Completed)
                                     {
                                         <button href="#" class="btn btn-success" disabled>
                                             <i class="fa fa-pencil">View</i>
                                         </button>
-                                        <button href="#" class="btn btn-success" onclick="getPraetors('@appointment.ID')">
+                                        <button href="#" class="btn btn-success" onclick="getPraetors('@Schedule.ID')">
                                             <i class="fa fa-pencil"></i>
                                         </button>
                                     }
                                     else
                                     {
-                                        foreach (var consultationRecord in Model?.View?.ConsultationRecords)
+                                        foreach (var oldRecord in Model?.View?.ConsultationRecords)
                                         {
-                                            if(consultationRecord.AppointmentID == appointment.ID)
+                                            if(oldRecord.ScheduleID == Schedule.ID)
                                             {
                                                 <!--Button For Modal Trigger-->
-                                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="@string.Format("#pfmodal{0}", appointment.ID)">
+                                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="@string.Format("#pfmodal{0}", Schedule.ID)">
                                                     <i class="fa fa-pencil">View</i>
                                                 </button>
                                                 <!--Button For Modal Trigger-->
 
 
                                                 <!-- Modal -->
-                                                <div class="modal fade" id="@string.Format("pfmodal{0}", appointment.ID)" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal fade" id="@string.Format("pfmodal{0}", Schedule.ID)" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header bg-white">
-                                                                <h5 class="modal-title" id="exampleModalLabel">Consultation</h5>
+                                                                <h5 class="modal-title" id="exampleModalLabel">Service</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"/>                                                       
                                                             </div>
                                                             <div class="modal-body bg-white">
                                                                 <div class="col-auto ">
-                                                                    <!-- Prescription and Finding -->
+                                                                    <!-- Services -->
                                                                     
-                                                                    @if(Model?.View?.Prescriptions != null)
+                                                                    @if(Model?.View?.Services != null)
                                                                     {
-                                                                        @foreach(var prescription in Model?.View?.Prescriptions)
+                                                                        @foreach(var services in Model?.View?.services)
                                                                         {
-                                                                            if(prescription.ConsultationRecordID == consultationRecord.ID)
+                                                                            if(services.OldRecordID == OldRecord.ID)
                                                                             {
                                                                                 <div class="card bg-white">
                                                                                     <div class="card-header bg-info">
-                                                                                        <span class="text-bg-info text-lg-center">PRESCRIPTIONS</span>
+                                                                                        <span class="text-bg-info text-lg-center">services</span>
                                                                                     </div>
                                                                                     <div class="card-body">
                                                                                             <div class="card-group">
-                                                                                            <p class="text-bg-dark"> DESCRIPTIONS: </p>
-                                                                                            <span>@prescription.Description</span>
+                                                                                            <p class="text-bg-dark"> Services: </p>
+                                                                                            <span>@prescription.services</span>
                                                                                             </div>
 
                                                                                             <div class="card-group">
                                                                                             <p class="text-bg-dark">TAGS:</p>
-                                                                                            <span>@prescription.Tags</span>
+                                                                                            <span>@services.Tags</span>
                                                                                             </div>
                                                                                         
                                                                                     </div>
@@ -349,25 +349,25 @@
                                                                     }
 
 
-                                                                    @if (Model?.View?.Findings != null)
+                                                                    @if (Model?.View?.ServiceProvider != null)
                                                                     {
-                                                                        @foreach (var finding in Model?.View?.Findings)
+                                                                        @foreach (var ServiceProvider in Model?.View?.ServiceProvider)
                                                                         {
                                                                             if (finding.ConsultationRecordID == consultationRecord.ID)
                                                                             {
                                                                                 <div class="card bg-white">
                                                                                     <div class="card-header bg-info">
-                                                                                        <span class="text-bg-info">FINDINGS</span>
+                                                                                        <span class="text-bg-info">ServiceProvider</span>
                                                                                     </div>
 
                                                                                     <div class="card-body">
                                                                                         <div class="card-group">
-                                                                                            <p class="text-bg-dark"> DESCRIPTIONS: </p>
-                                                                                            <span>@finding.Description</span>
+                                                                                            <p class="text-bg-dark"> ServiceProvider: </p>
+                                                                                            <span>@ServiceProvider.Description</span>
                                                                                         </div>
                                                                                         <div class="card-group">
                                                                                             <p class="text-bg-dark">TAGS:</p>
-                                                                                            <span>@finding.Tags</span>
+                                                                                            <span>@ServiceProvider.Tags</span>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
@@ -375,7 +375,7 @@
                                                                         }
                                                                     }
 
-                                                                    <!-- Prescription and Finding -->
+                                                                    <!-- Service Provider -->
                                                                 </div>
                                                             </div>
                                                             
@@ -393,17 +393,17 @@
 
 
                                 <td>
-                                    @if (appointment.Status == Status.Pending || appointment.Status == Status.InProgress )
+                                    @if (Schedule.Status == Status.Pending || Schedule.Status == Status.InProgress )
                                     {
 
 
                                         <!--Button For Modal Trigger-->
-                                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="@string.Format("#Editsmodal{0}", appointment.ID)">
-                                            <i class="fa fa-pencil">Edit Appointment</i>
+                                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="@string.Format("#Editsmodal{0}", Schedule.ID)">
+                                            <i class="fa fa-pencil">Edit Schedule</i>
                                         </button>
                                         <!--Button For Modal Trigger-->
                                         <!-- Modal -->
-                                        <div class="modal fade" id="@string.Format("Editsmodal{0}", appointment.ID)" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal fade" id="@string.Format("Editsmodal{0}", Schedule.ID)" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog" role="document">
                                                 <div class="modal-content bg-white">
                                                     <div class="modal-header bg-white">
@@ -414,15 +414,15 @@
                                                         <div class="col-auto ">
                                                           <form method="Post" asp-page-handler="EditApt">
                                                                 <div class="form-group">
-                                                                    <label asp-for="View.FirstName">Symptoms</label>
-                                                                    <input type="text" class="form-control" placeholder="Enter symptoms" asp-for="View.Symptom1" value="@appointment.Symptom">
+                                                                    <label asp-for="View.FirstName">Services</label>
+                                                                    <input type="text" class="form-control" placeholder="Enter symptoms" asp-for="View.Symptom1" value="@Schedule.Services">
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label asp-for="View.BirthDate">Date Time</label>
-                                                                    <input type="datetime-local" class="form-control" placeholder="Enter abbreviation" asp-for="View.StartTime1" value="@appointment.Symptom">
+                                                                    <input type="datetime-local" class="form-control" placeholder="Enter abbreviation" asp-for="View.StartTime" value="@Schedule.Services">
                                                                 </div>
                                                                 <div class="form-group">
-                                                                    <input type="hidden" class="form-control" placeholder="Enter Address" asp-for="View.SymptomID" value="@appointment.ID">
+                                                                    <input type="hidden" class="form-control" placeholder="Enter Address" asp-for="View.ServicesID" value="@Schedule.ID">
                                                                 </div>
 
 
@@ -431,7 +431,7 @@
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <button type="submit" class="btn btn-primary">Save</button>
-                                                                    <a href="~/manage/admin/dashboard" class="btn btn-secondary">Cancel</a>
+                                                                    <a href="~/manage/admin/interface" class="btn btn-secondary">Cancel</a>
                                                                 </div>
                                                           </form>
 

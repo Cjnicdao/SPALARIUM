@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Spalrium.ViewModel;
 using System.Reflection;
+using Spalarium.Pages.Manage.Admin;
 
 namespace Spalarium.Pages.Manage.Account
 {
@@ -74,12 +75,12 @@ namespace Spalarium.Pages.Manage.Account
                 ModelState.AddModelError("", "Address name cannot be blank.");
                 return Page();
             }
-            Guid patientGuid = Guid.NewGuid();
+            Guid CustomerGuid = Guid.NewGuid();
             Guid userGuid = Guid.NewGuid();
             User user = new User()
             {
                 ID = userGuid,
-                PatientID = patientGuid,
+                CustomerID = CustomerGuid,
                 FirstName = View.FirstName,
                 MiddleName = View.MiddleName,
                 LastName = View.LastName,
@@ -98,7 +99,7 @@ namespace Spalarium.Pages.Manage.Account
                     UserID =userGuid,
                     Type = "General",
                     Key = "Password",
-                    Value = BCrypt.Net.BCrypt.EnhancedHashPassword(View.Password)
+                    Value = BCrypt.Net.BCrypt.HashPassword(View.Password)
                 },
                 new UserLogin()
                 {
@@ -153,6 +154,23 @@ namespace Spalarium.Pages.Manage.Account
             public string? MiddleName { get; internal set; }
             public string? LastName { get; internal set; }
             public object Gender { get; internal set; }
+            public DateTime BirthDate { get; internal set; }
+            public string? Address { get; internal set; }
+            public string? Email { get; internal set; }
+            public string? Password { get; internal set; }
         }
+    }
+
+    internal class UserLogin
+    {
+        public UserLogin()
+        {
+        }
+
+        public Guid ID { get; set; }
+        public Guid UserID { get; set; }
+        public string Type { get; set; }
+        public string Key { get; set; }
+        public object Value { get; set; }
     }
 }

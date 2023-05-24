@@ -40,9 +40,21 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Abp.Zero.Common": {
+              "target": "Package",
+              "version": "[8.2.0, )"
+            },
             "BCrypt.Net": {
               "target": "Package",
               "version": "[0.1.0, )"
+            },
+            "MiNET": {
+              "target": "Package",
+              "version": "[1.0.2304, )"
+            },
+            "MySqlConnector": {
+              "target": "Package",
+              "version": "[2.2.6, )"
             }
           },
           "imports": [

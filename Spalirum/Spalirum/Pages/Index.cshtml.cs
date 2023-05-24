@@ -3,9 +3,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
+using Spalarium.Pages.Manage.Admin;
+using Abp.Authorization.Users;
 
-
-namespace Capstonep2.Pages
+namespace Spalarium.Pages
 {
     public class IndexModel : PageModel
     {
@@ -54,7 +55,7 @@ namespace Capstonep2.Pages
 
                 if (passwordInfo != null)
                 {
-                    if (BCrypt.Net.BCrypt.EnhancedVerify(View.Password, passwordInfo.Value))
+                    if (BCrypt.Net.BCrypt.Verify(View.Password, passwordInfo.Value))
                     {
                         var loginRetries = _context?.UserLogins?.FirstOrDefault(a => a.UserID == user.ID && a.Key.ToLower() == "loginretries");
                         if (loginRetries == null)
